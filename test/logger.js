@@ -16,6 +16,11 @@ test('constructor', (t) => {
   t.is(logger.params.scope, params.scope);
 });
 
+test('constructor using string', (t) => {
+  const logger = new Logger('scope');
+  t.is(logger.params.scope, 'scope');
+});
+
 test('error debug', (t) => {
   let text: string = '';
   const unhookIntercept = intercept((txt) => {
@@ -144,4 +149,19 @@ test('changing tags', (t) => {
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept2();
   t.is(text2.includes('envar_scope:untagged:error {"message":"some message","timestamp":'), true);
+});
+
+test('no timestamps', (t) => {
+  process.env.LOG_SCOPE = 'envar_scope';
+  process.env.LOG_NOTIMESTAMP = '1';
+  let text: string = '';
+  const unhookIntercept = intercept((txt) => {
+    text += `hooked: ${txt}`;
+  });
+  const params: ILoggerConstructorParams = { };
+  const logger = new Logger(params);
+  logger.tags(['newtag', 'tag2']).error('some message');
+  t.is(logger.params.scope, process.env.LOG_SCOPE);
+  unhookIntercept();
+  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message"}'), true);
 });

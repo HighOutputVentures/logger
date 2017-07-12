@@ -7,19 +7,27 @@ import { ILoggerConstructorParams } from './interfaces/ILoggerConstructorParams'
 
 export default class Logger implements ILogger {
   params: ILoggerConstructorParams;
-  debug: debug;
 
-  constructor(params: ?ILoggerConstructorParams) {
-    const scope = process.env.LOG_SCOPE || 'default';
+  constructor(params: ?ILoggerConstructorParams | string) {
+    const defaultScope : ?string = _.trim(process.env.LOG_SCOPE) || 'default';
+    const envTimeStamp : ?boolean = !process.env.LOG_NOTIMESTAMP;
     if (_.isNil(params)) {
       this.params = {
-        scope,
+        scope: defaultScope,
         tags: [''],
+        enableTimestamp: envTimeStamp,
       };
-    } else {
+    } else if (typeof params === 'string') {
+      this.params = {
+        scope: _.trim(params),
+        tags: [''],
+        enableTimestamp: envTimeStamp,
+      };
+    } else if (typeof params === 'object') {
       this.params = _.merge(this.params, params);
-      this.params.scope = _.isNil(this.params.scope) ? scope : this.params.scope;
+      this.params.scope = _.isNil(this.params.scope) ? defaultScope : this.params.scope;
       this.params.scope = this.params.scope || 'default';
+      this.params.enableTimestamp = envTimeStamp;
     }
   }
 
@@ -33,11 +41,18 @@ export default class Logger implements ILogger {
     if (typeof this.params.scope !== 'string') this.params.scope = 'default';
     if (typeof body === 'object') {
       payload = _.merge(body, { timestamp: new Date() });
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
     } else if (typeof body === 'string') {
-      payload = _.merge(payload, { message: body, timestamp: new Date() });
+      payload = _.merge(payload, { message: _.trim(body) });
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
     } else {
       return;
     }
+
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
     const tags = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
     const d = debug(`${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level}`);
