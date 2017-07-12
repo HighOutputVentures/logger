@@ -100,6 +100,5 @@ test('error with no scope and no tag but using env var - string param', (t) => {
   logger.error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  console.log(text);
   t.is(text.includes('envar_scope:untagged:error {"message":"some message","timestamp":'), true);
 });
