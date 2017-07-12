@@ -12,9 +12,9 @@ export default class Logger implements ILogger {
     this.hostname = os.hostname();
     this.pid = process.pid;
     const defaultScope : ?string = _.isNull(process.env.LOG_SCOPE) ? 'default' : process.env.LOG_SCOPE;
-    const envTimeStamp : ?boolean = !process.env.LOG_NOTIMESTAMP;
-    const envPid : ?boolean = !process.env.LOG_NOPID;
-    const envHostname : ?boolean = !process.env.LOG_NOHOSTNAME;
+    const envTimeStamp : ?boolean = !Logger.isDisabled(process.env.LOG_NOTIMESTAMP);
+    const envPid : ?boolean = !Logger.isDisabled(process.env.LOG_NOPID);
+    const envHostname : ?boolean = !Logger.isDisabled(process.env.LOG_NOHOSTNAME);
 
     if (_.isNil(params)) {
       this.params = {
@@ -43,29 +43,47 @@ export default class Logger implements ILogger {
   }
 
   /**
+   * Checks if the value is explicity equal to '1'.
+   * @param param
+   * @param defaulValue
+   * @returns {boolean}
+   */
+  static isDisabled(param: any): boolean {
+    return _.isNil(param) ? false : (_.toNumber(param) === 1);
+  }
+
+  /**
    * Creates a debug output at error level.
    * @param {Object} body: and error object.
    * @param level can be 'error', 'warn', 'info', 'verbose'
    */
-  log(body: any, level: Level = 'verbose') {
+  log(body: any, level: Level = 'verbose'): void {
     let payload = {};
     if (typeof this.params.scope !== 'string') this.params.scope = 'default';
     if (typeof body === 'object') {
-      payload = _.merge(body, { timestamp: new Date() });
+      payload = _.merge(payload, body);
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
+      if (this.params.enablePid) {
+        payload = _.merge(payload, { pid: this.pid });
+      }
+      if (this.params.enableHostname) {
+        payload = _.merge(payload, { hostname: this.hostname });
+      }
     } else if (typeof body === 'string') {
       payload = _.merge(payload, { message: _.trim(body) });
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
+      if (this.params.enablePid) {
+        payload = _.merge(payload, { pid: this.pid });
+      }
+      if (this.params.enableHostname) {
+        payload = _.merge(payload, { hostname: this.hostname });
+      }
     } else {
       return;
-    }
-
-    if (this.params.enableTimestamp) {
-      payload = _.merge(payload, { timestamp: new Date() });
-    }
-    if (this.params.enablePid) {
-      payload = _.merge(payload, { pid: this.pid });
-    }
-    if (this.params.enableHostname) {
-      payload = _.merge(payload, { hostname: this.hostname });
     }
 
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
@@ -76,10 +94,13 @@ export default class Logger implements ILogger {
 
   /**
    * Creates a debug output at error level.
-   * @param {Object} body: and error object.
+   * @param {Object} body: an error object.
    */
-  error(body: any) {
-    this.log(body, 'error');
+  error(err: any) {
+    let payload = (typeof err === 'string') ? { message: err } : _.toPlainObject(err);
+    if (!_.isNil(err.message)) payload = _.merge(payload, { message: err.message });
+    if (!_.isNil(err.stack)) payload = _.merge(payload, { message: err.stack });
+    this.log(payload, 'error');
   }
 
   /**
@@ -116,7 +137,7 @@ export default class Logger implements ILogger {
   tags(tags: ?Array<string>): Logger {
     const params : ILoggerConstructorParams = {
       scope: this.params.scope,
-      tags,
+      tags: _.compact(_.union(this.params.tags, tags)),
     };
     return new Logger(params);
   }

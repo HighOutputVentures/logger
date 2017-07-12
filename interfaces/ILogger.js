@@ -7,6 +7,8 @@ export interface ILogger {
   static warn(body: any): void;
   static info(body: any): void;
   static verbose(body: any): void;
+  static isDisabled(param: any): boolean;
+
   error(body: any): void;
   warn(body: any): void;
   info(body: any): void;

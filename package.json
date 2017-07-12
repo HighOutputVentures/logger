@@ -1,7 +1,7 @@
 {
   "name": "logger",
   "version": "0.0.1",
-  "description": "A logging framework",
+  "description": "A logging framework on top of debug",
   "main": "build/index.js",
   "scripts": {
     "build": "babel src/ -d build/",
