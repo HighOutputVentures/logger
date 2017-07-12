@@ -30,11 +30,24 @@ export default class Logger implements ILogger {
    * @param level can be 'error', 'warn', 'info', 'verbose'
    */
   log(body: any, level: Level = 'verbose') {
-    if (typeof this.params.scope !== 'string') return;
+    let payload = {};
+    if (typeof this.params.scope !== 'string') this.params.scope = 'default';
+    if (typeof body === 'object') {
+      payload = _.merge(body, {
+        timestamp: new Date(),
+      });
+    } else if (typeof body === 'string') {
+      payload = _.merge(payload, {
+        message: body,
+        timestamp: new Date(),
+      });
+    } else {
+      return;
+    }
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
     const tags = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
     const output = `${this.params.scope}:${tags}:${level} %j}`;
-    this.debug(output, body);
+    this.debug(output, payload);
   }
 
   /**
