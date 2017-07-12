@@ -76,10 +76,13 @@ export default class Logger implements ILogger {
 
   /**
    * Creates a debug output at error level.
-   * @param {Object} body: and error object.
+   * @param {Object} body: an error object.
    */
-  error(body: any) {
-    this.log(body, 'error');
+  error(err: any) {
+    let payload = (typeof err === 'string') ? { message: err } : _.toPlainObject(err);
+    if (!_.isNil(err.message)) payload = _.merge(payload, { message: err.message });
+    if (!_.isNil(err.stack)) payload = _.merge(payload, { message: err.stack });
+    this.log(payload, 'error');
   }
 
   /**

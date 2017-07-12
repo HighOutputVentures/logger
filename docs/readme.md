@@ -51,10 +51,12 @@ logger.info('hello');
 logger.verbose({message: 'hello'});
 // Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"verbose":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
-export LOG_NOTIMESTAMP=1
+// export LOG_NOTIMESTAMP=1
 logger.verbose({message: 'hello'});
 // Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"verbose":"hello"}
 ```
+
+Adding tags on top of existing tags.
 
 ```js
 // export LOG_NOTIMESTAMP=1
