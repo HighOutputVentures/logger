@@ -102,3 +102,26 @@ test('error with no scope and no tag but using env var - string param', (t) => {
   unhookIntercept();
   t.is(text.includes('envar_scope:untagged:error {"message":"some message","timestamp":'), true);
 });
+
+test('changing tags', (t) => {
+  process.env.LOG_SCOPE = 'envar_scope';
+  let text: string = '';
+  const unhookIntercept = intercept((txt) => {
+    text += `hooked: ${txt}`;
+  });
+  const params: ILoggerConstructorParams = { };
+  const logger = new Logger(params);
+  logger.tags(['newtag', 'tag2']).error('some message');
+  t.is(logger.params.scope, process.env.LOG_SCOPE);
+  unhookIntercept();
+  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message","timestamp":'), true);
+
+  let text2: string = '';
+  const unhookIntercept2 = intercept((txt) => {
+    text2 += `hooked: ${txt}`;
+  });
+  logger.error('some message');
+  t.is(logger.params.scope, process.env.LOG_SCOPE);
+  unhookIntercept2();
+  t.is(text2.includes('envar_scope:untagged:error {"message":"some message","timestamp":'), true);
+});
