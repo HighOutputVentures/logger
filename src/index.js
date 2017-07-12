@@ -21,7 +21,6 @@ export default class Logger implements ILogger {
       this.params.scope = _.isNil(this.params.scope) ? scope : this.params.scope;
       this.params.scope = this.params.scope || 'default';
     }
-    this.debug = debug(this.params.scope);
   }
 
   /**
@@ -46,8 +45,8 @@ export default class Logger implements ILogger {
     }
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
     const tags = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
-    const output = `${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level} %j}`;
-    this.debug(output, payload);
+    const d = debug(`${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level}`);
+    d('%j', payload);
   }
 
   /**
