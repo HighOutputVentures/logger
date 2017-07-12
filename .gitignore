@@ -1,0 +1,8 @@
+build/
+node_modules/
+.idea
+.vscode/
+.vagrant/
+.nyc_output/
+flow-typed/
+dev.config.yml
