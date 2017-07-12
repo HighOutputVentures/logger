@@ -2,7 +2,7 @@
   "name": "logger",
   "version": "0.0.1",
   "description": "A logging framework",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "babel src/ -d build/",
     "lint": "flow check && eslint src/ test/",
