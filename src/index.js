@@ -34,7 +34,7 @@ export default class Logger implements ILogger {
     if (typeof body === 'object') {
       payload = _.merge(body, { timestamp: new Date() });
     } else if (typeof body === 'string') {
-      payload = _.merge(payload, { message: body, timestamp: new Date(), });
+      payload = _.merge(payload, { message: body, timestamp: new Date() });
     } else {
       return;
     }

@@ -41,6 +41,16 @@ test('error debug - static call', (t) => {
   t.is(text.includes('default:untagged:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
 });
 
+test('error string - static call', (t) => {
+  let text: string = '';
+  const unhookIntercept = intercept((txt) => {
+    text += `hooked: ${txt}`;
+  });
+  Logger.error('some error string');
+  unhookIntercept();
+  t.is(text.includes('default:untagged:error {"message":"some error string","timestamp":'), true);
+});
+
 test('error with no scope', (t) => {
   let text: string = '';
   const unhookIntercept = intercept((txt) => {
