@@ -9,7 +9,7 @@ export default class Logger implements ILogger {
   params: ILoggerConstructorParams;
 
   constructor(params: ?ILoggerConstructorParams | string) {
-    const defaultScope : ?string = _.trim(process.env.LOG_SCOPE) || 'default';
+    const defaultScope : ?string = _.isNull(process.env.LOG_SCOPE) ? 'default' : process.env.LOG_SCOPE;
     const envTimeStamp : ?boolean = !process.env.LOG_NOTIMESTAMP;
     if (_.isNil(params)) {
       this.params = {
@@ -26,7 +26,6 @@ export default class Logger implements ILogger {
     } else if (typeof params === 'object') {
       this.params = _.merge(this.params, params);
       this.params.scope = _.isNil(this.params.scope) ? defaultScope : this.params.scope;
-      this.params.scope = this.params.scope || 'default';
       this.params.enableTimestamp = envTimeStamp;
     }
   }
