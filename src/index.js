@@ -1,9 +1,6 @@
 // @flow
 import debug from 'debug';
 import _ from 'lodash';
-import type { Level } from './interfaces/ILogger';
-import { ILogger } from './interfaces/ILogger';
-import { ILoggerConstructorParams } from './interfaces/ILoggerConstructorParams';
 
 export default class Logger implements ILogger {
   params: ILoggerConstructorParams;

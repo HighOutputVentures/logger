@@ -2,7 +2,6 @@
 import test from 'ava';
 import intercept from 'intercept-stdout';
 import Logger from '../src/index';
-import { ILoggerConstructorParams } from '../src/interfaces/ILoggerConstructorParams';
 
 test.before('before', () => {
   process.env.DEBUG = '*,-ava,-babel,-istanbuljs';
