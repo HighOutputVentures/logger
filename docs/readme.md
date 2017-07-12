@@ -1,4 +1,11 @@
-# Initialization
+## Logger
+
+A wrapper on top of the [`debug` npm package](https://www.npmjs.com/package/debug). 
+
+You will need to expose the `stdout` by setting the DEBUG environment variable on the running nodejs process. 
+
+If you have a `LOG_SCOPE` of `myscope`, then you can expose the `stdout` by setting `DEBUG=myscope*`. You can further filter out by using `DEBUG="some_scope*tag2*"` environment variable when you want to show all logs that begin with `some_scope` and then also contains `tag2` as tag. Exlcusion can also work by setting `DEBUG="some_scope*tag2*,-*verbose"`, which means logs that are `verbose` are not pushed to `stdout`.
+
 ### Environment Variables:
 
 Environment Variable | Description
@@ -50,11 +57,9 @@ logger.verbose({message: 'hello'});
 ```
 
 ```js
-export LOG_NOTIMESTAMP=1
-export LOG_NOPID=1
-export LOG_NOHOSTNAME=1
+// export LOG_NOTIMESTAMP=1
+// export LOG_NOPID=1
+// export LOG_NOHOSTNAME=1
 logger.tags(['controller','some']).info({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:controller,some:verbose {"verbose":"hello","pid":75589,"hostname":"web1.highoutput.io"}
-
-logger.tags(['model']).info({message: 'hello'});
+// Wed, 12 Jul 2017 07:51:09 GMT default:controller,some:verbose {"verbose":"hello"}
 ```
