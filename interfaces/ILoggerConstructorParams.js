@@ -8,4 +8,6 @@ export interface ILoggerConstructorParams {
   scope?: ?string;
   tags?: ?Array<string>;
   enableTimestamp?: ?boolean;
+  enablePid?: ?boolean;
+  enableHostname?: ?boolean;
 }

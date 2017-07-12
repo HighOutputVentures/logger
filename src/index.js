@@ -1,29 +1,44 @@
 // @flow
 import debug from 'debug';
 import _ from 'lodash';
+import os from 'os';
 
 export default class Logger implements ILogger {
   params: ILoggerConstructorParams;
+  pid: number;
+  hostname: string;
 
   constructor(params: ?ILoggerConstructorParams | string) {
+    this.hostname = os.hostname();
+    this.pid = process.pid;
     const defaultScope : ?string = _.isNull(process.env.LOG_SCOPE) ? 'default' : process.env.LOG_SCOPE;
     const envTimeStamp : ?boolean = !process.env.LOG_NOTIMESTAMP;
+    const envPid : ?boolean = !process.env.LOG_NOPID;
+    const envHostname : ?boolean = !process.env.LOG_NOHOSTNAME;
+
     if (_.isNil(params)) {
       this.params = {
         scope: defaultScope,
         tags: [''],
         enableTimestamp: envTimeStamp,
+        enablePid: envPid,
+        enableHostname: envHostname,
       };
     } else if (typeof params === 'string') {
       this.params = {
         scope: _.trim(params),
         tags: [''],
         enableTimestamp: envTimeStamp,
+        enablePid: envPid,
+        enableHostname: envHostname,
       };
     } else if (typeof params === 'object') {
-      this.params = _.merge(this.params, params);
+      this.params = _.merge(this.params, params, {
+        enableTimestamp: envTimeStamp,
+        enablePid: envPid,
+        enableHostname: envHostname,
+      });
       this.params.scope = _.isNil(this.params.scope) ? defaultScope : this.params.scope;
-      this.params.enableTimestamp = envTimeStamp;
     }
   }
 
@@ -37,16 +52,20 @@ export default class Logger implements ILogger {
     if (typeof this.params.scope !== 'string') this.params.scope = 'default';
     if (typeof body === 'object') {
       payload = _.merge(body, { timestamp: new Date() });
-      if (this.params.enableTimestamp) {
-        payload = _.merge(payload, { timestamp: new Date() });
-      }
     } else if (typeof body === 'string') {
       payload = _.merge(payload, { message: _.trim(body) });
-      if (this.params.enableTimestamp) {
-        payload = _.merge(payload, { timestamp: new Date() });
-      }
     } else {
       return;
+    }
+
+    if (this.params.enableTimestamp) {
+      payload = _.merge(payload, { timestamp: new Date() });
+    }
+    if (this.params.enablePid) {
+      payload = _.merge(payload, { pid: this.pid });
+    }
+    if (this.params.enableHostname) {
+      payload = _.merge(payload, { hostname: this.hostname });
     }
 
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
