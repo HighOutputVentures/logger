@@ -162,5 +162,5 @@ test('no timestamps', (t) => {
   logger.tags(['newtag', 'tag2']).error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message"}'), true);
+  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message"'), true);
 });
