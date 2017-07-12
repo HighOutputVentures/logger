@@ -11,10 +11,15 @@ export default class Logger implements ILogger {
   constructor(params: ?ILoggerConstructorParams | string) {
     this.hostname = os.hostname();
     this.pid = process.pid;
+    console.log(process.env.LOG_SCOPE);
+    console.log(process.env.LOG_NOTIMESTAMP);
+    console.log(process.env.LOG_NOPID);
+    console.log(process.env.LOG_NOHOSTNAME);
+
     const defaultScope : ?string = _.isNull(process.env.LOG_SCOPE) ? 'default' : process.env.LOG_SCOPE;
-    const envTimeStamp : ?boolean = !process.env.LOG_NOTIMESTAMP;
-    const envPid : ?boolean = !process.env.LOG_NOPID;
-    const envHostname : ?boolean = !process.env.LOG_NOHOSTNAME;
+    const envTimeStamp : ?boolean = !Logger.isDisabled(process.env.LOG_NOTIMESTAMP);
+    const envPid : ?boolean = !Logger.isDisabled(process.env.LOG_NOPID);
+    const envHostname : ?boolean = !Logger.isDisabled(process.env.LOG_NOHOSTNAME);
 
     if (_.isNil(params)) {
       this.params = {
@@ -43,29 +48,47 @@ export default class Logger implements ILogger {
   }
 
   /**
+   * Checks if the value is explicity equal to '1'.
+   * @param param
+   * @param defaulValue
+   * @returns {boolean}
+   */
+  static isDisabled(param: any): boolean {
+    return _.isNull(param) ? false : (_.toNumber(param) === 1);
+  }
+
+  /**
    * Creates a debug output at error level.
    * @param {Object} body: and error object.
    * @param level can be 'error', 'warn', 'info', 'verbose'
    */
-  log(body: any, level: Level = 'verbose') {
+  log(body: any, level: Level = 'verbose'): void {
     let payload = {};
     if (typeof this.params.scope !== 'string') this.params.scope = 'default';
     if (typeof body === 'object') {
-      payload = _.merge(body, { timestamp: new Date() });
+      payload = _.merge(payload, body);
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
+      if (this.params.enablePid) {
+        payload = _.merge(payload, { pid: this.pid });
+      }
+      if (this.params.enableHostname) {
+        payload = _.merge(payload, { hostname: this.hostname });
+      }
     } else if (typeof body === 'string') {
       payload = _.merge(payload, { message: _.trim(body) });
+      if (this.params.enableTimestamp) {
+        payload = _.merge(payload, { timestamp: new Date() });
+      }
+      if (this.params.enablePid) {
+        payload = _.merge(payload, { pid: this.pid });
+      }
+      if (this.params.enableHostname) {
+        payload = _.merge(payload, { hostname: this.hostname });
+      }
     } else {
       return;
-    }
-
-    if (this.params.enableTimestamp) {
-      payload = _.merge(payload, { timestamp: new Date() });
-    }
-    if (this.params.enablePid) {
-      payload = _.merge(payload, { pid: this.pid });
-    }
-    if (this.params.enableHostname) {
-      payload = _.merge(payload, { hostname: this.hostname });
     }
 
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
@@ -117,11 +140,16 @@ export default class Logger implements ILogger {
    * @param tags
    */
   tags(tags: ?Array<string>): Logger {
+    console.log('original tags');
+    console.log(this.params.tags);
+    console.log('new tags');
+    console.log(tags);
     const params : ILoggerConstructorParams = {
       scope: this.params.scope,
-      tags: (!(_.isNil(this.params.scope)) && _.isArray(this.params.scope))
-        ? _.compact(_.union(this.params.scope, tags)) : tags,
+      tags: _.compact(_.union(this.params.tags, tags)),
     };
+    console.log('union tags');
+    console.log(params.tags);
     return new Logger(params);
   }
 
