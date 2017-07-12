@@ -11,11 +11,6 @@ export default class Logger implements ILogger {
   constructor(params: ?ILoggerConstructorParams | string) {
     this.hostname = os.hostname();
     this.pid = process.pid;
-    console.log(process.env.LOG_SCOPE);
-    console.log(process.env.LOG_NOTIMESTAMP);
-    console.log(process.env.LOG_NOPID);
-    console.log(process.env.LOG_NOHOSTNAME);
-
     const defaultScope : ?string = _.isNull(process.env.LOG_SCOPE) ? 'default' : process.env.LOG_SCOPE;
     const envTimeStamp : ?boolean = !Logger.isDisabled(process.env.LOG_NOTIMESTAMP);
     const envPid : ?boolean = !Logger.isDisabled(process.env.LOG_NOPID);
@@ -140,16 +135,10 @@ export default class Logger implements ILogger {
    * @param tags
    */
   tags(tags: ?Array<string>): Logger {
-    console.log('original tags');
-    console.log(this.params.tags);
-    console.log('new tags');
-    console.log(tags);
     const params : ILoggerConstructorParams = {
       scope: this.params.scope,
       tags: _.compact(_.union(this.params.tags, tags)),
     };
-    console.log('union tags');
-    console.log(params.tags);
     return new Logger(params);
   }
 
