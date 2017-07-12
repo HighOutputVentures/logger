@@ -1,0 +1,10 @@
+'use strict';Object.defineProperty(exports, "__esModule", { value: true });
+var _ILoggerConstructorParams = require('../interfaces/ILoggerConstructorParams');
+
+class Logger {
+
+
+  constructor(params) {
+    this.params = params;
+  }}exports.default = Logger;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9tb2R1bGUvbG9nZ2VyLmpzIl0sIm5hbWVzIjpbIkxvZ2dlciIsImNvbnN0cnVjdG9yIiwicGFyYW1zIl0sIm1hcHBpbmdzIjoiO0FBQ0E7O0FBRWUsTUFBTUEsTUFBTixDQUFhOzs7QUFHMUJDLGNBQVlDLE1BQVosRUFBOEM7QUFDNUMsU0FBS0EsTUFBTCxHQUFjQSxNQUFkO0FBQ0QsR0FMeUIsQyxrQkFBUEYsTSIsImZpbGUiOiJsb2dnZXIuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAZmxvd1xuaW1wb3J0IHsgSUxvZ2dlckNvbnN0cnVjdG9yUGFyYW1zIH0gZnJvbSAnLi4vaW50ZXJmYWNlcy9JTG9nZ2VyQ29uc3RydWN0b3JQYXJhbXMnO1xuXG5leHBvcnQgZGVmYXVsdCBjbGFzcyBMb2dnZXIge1xuICBwYXJhbXM6IElMb2dnZXJDb25zdHJ1Y3RvclBhcmFtcztcblxuICBjb25zdHJ1Y3RvcihwYXJhbXM6IElMb2dnZXJDb25zdHJ1Y3RvclBhcmFtcykge1xuICAgIHRoaXMucGFyYW1zID0gcGFyYW1zO1xuICB9XG59XG4iXX0=
