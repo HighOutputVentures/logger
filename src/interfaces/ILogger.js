@@ -3,10 +3,14 @@
 export type Level = 'info' | 'error' | 'verbose' | 'warn';
 
 export interface ILogger {
-  error(body: any): any;
-  warn(body: any): any;
-  info(body: any): any;
-  verbose(body: any): any;
+  static error(body: any): void;
+  static warn(body: any): void;
+  static info(body: any): void;
+  static verbose(body: any): void;
+  error(body: any): void;
+  warn(body: any): void;
+  info(body: any): void;
+  verbose(body: any): void;
   log(body: any, level: Level): void;
   tags(body: Array<string>): ILogger;
 }

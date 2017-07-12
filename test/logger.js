@@ -31,6 +31,16 @@ test('error debug', (t) => {
   t.is(text.includes('some_scope:tag1,tag2:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
 });
 
+test('error debug - static call', (t) => {
+  let text: string = '';
+  const unhookIntercept = intercept((txt) => {
+    text += `hooked: ${txt}`;
+  });
+  Logger.error({ data: 'data', array: ['1', { d: 'data' }] });
+  unhookIntercept();
+  t.is(text.includes('default:untagged:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+});
+
 test('error with no scope', (t) => {
   let text: string = '';
   const unhookIntercept = intercept((txt) => {

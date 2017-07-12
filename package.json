@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src/ -d build/",
     "lint": "flow check && eslint src/ test/",
-    "test": "DEBUG=*,-ava,-babel,-istanbuljs nyc ava ./test",
+    "test": "DEBUG=*,-ava,-babel,-istanbuljs nyc ava -s ./test",
     "flow:start": "flow start",
     "flow:stop": "flow stop",
     "flow:status": "flow status",

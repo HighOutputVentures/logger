@@ -46,7 +46,7 @@ export default class Logger implements ILogger {
     }
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
     const tags = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
-    const output = `${this.params.scope}:${tags}:${level} %j}`;
+    const output = `${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level} %j}`;
     this.debug(output, payload);
   }
 
@@ -59,27 +59,27 @@ export default class Logger implements ILogger {
   }
 
   /**
-   * Creates a debug output at error level.
+   * Creates a debug output at warn level.
    * @param {Object} body: a warning object. preferably with a message field.
-   * @param {Object} body.message: a message to be ingested by log server.
+   * @param {Object} body.message: a message to be ingested by log server. optional.
    */
   warn(body: any) {
     this.log(body, 'warn');
   }
 
   /**
-   * Creates a debug output at error level.
+   * Creates a debug output at info level.
    * @param {Object} body: a warning object. preferably with a message field.
-   * @param {Object} body.message: a message to be ingested by log server.
+   * @param {Object} body.message: a message to be ingested by log server. optional.
    */
   info(body: any) {
     this.log(body, 'info');
   }
 
   /**
-   * Creates a debug output at error level.
+   * Creates a debug output at verbose level.
    * @param {Object} body: a warning object. preferably with a message field.
-   * @param {Object} body.message: a message to be ingested by log server.
+   * @param {Object} body.message: a message to be ingested by log server. optional.
    */
   verbose(body: any) {
     this.log(body, 'verbose');
@@ -95,5 +95,30 @@ export default class Logger implements ILogger {
       tags,
     };
     return new Logger(params);
+  }
+
+  static log(body: any, level: Level = 'verbose') {
+    const logger = new Logger();
+    logger.log(body, level);
+  }
+
+  static error(body: any) {
+    const logger = new Logger();
+    logger.error(body);
+  }
+
+  static warn(body: any) {
+    const logger = new Logger();
+    logger.warn(body);
+  }
+
+  static info(body: any) {
+    const logger = new Logger();
+    logger.info(body);
+  }
+
+  static verbose(body: any) {
+    const logger = new Logger();
+    logger.verbose(body);
   }
 }
