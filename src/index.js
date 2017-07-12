@@ -49,7 +49,7 @@ export default class Logger implements ILogger {
    * @returns {boolean}
    */
   static isDisabled(param: any): boolean {
-    return _.isNull(param) ? false : (_.toNumber(param) === 1);
+    return _.isNil(param) ? false : (_.toNumber(param) === 1);
   }
 
   /**
