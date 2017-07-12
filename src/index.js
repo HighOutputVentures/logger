@@ -119,7 +119,8 @@ export default class Logger implements ILogger {
   tags(tags: ?Array<string>): Logger {
     const params : ILoggerConstructorParams = {
       scope: this.params.scope,
-      tags,
+      tags: (!(_.isNil(this.params.scope)) && _.isArray(this.params.scope))
+        ? _.compact(_.union(this.params.scope, tags)) : tags,
     };
     return new Logger(params);
   }
