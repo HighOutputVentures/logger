@@ -59,7 +59,6 @@ export default class Logger implements ILogger {
    */
   log(body: any, level: Level = 'verbose'): void {
     let payload = {};
-    if (typeof this.params.scope !== 'string') this.params.scope = 'default';
     if (typeof body === 'object') {
       payload = _.merge(payload, body);
       if (this.params.enableTimestamp) {
@@ -86,10 +85,11 @@ export default class Logger implements ILogger {
       return;
     }
 
+    this.params.scope = this.params.scope || 'default';
     // this is so that it will be easier to query on the backend ie. loggly or elastic search.
-    const tags = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
-    const d = debug(`${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level}`);
-    d('%j', payload);
+    const tags: string = this.params.tags != null && _.isArray(this.params.tags) ? this.params.tags.join() : 'untagged';
+    const label: string = `${this.params.scope}:${tags === '' ? 'untagged' : tags}:${level}`;
+    debug(label.replace(/(?:\r\n|\r|\n)/g, ' '))('%j', payload);
   }
 
   /**
