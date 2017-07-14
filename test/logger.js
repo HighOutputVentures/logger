@@ -32,7 +32,7 @@ test('error debug', (t) => {
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, params.scope);
   unhookIntercept();
-  t.is(text.includes('some_scope:tag1,tag2:error {"data":"data","array":["1",{"d":"data"}]'), true);
+  t.is(text.includes('some_scope:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -46,7 +46,7 @@ test('error debug - static call', (t) => {
   });
   Logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   unhookIntercept();
-  t.is(text.includes('default:untagged:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+  t.is(text.includes('default:untagged:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -60,7 +60,7 @@ test('error string - static call', (t) => {
   });
   Logger.error('some error string');
   unhookIntercept();
-  t.is(text.includes('default:untagged:error {"message":"some error string"'), true);
+  t.is(text.includes('default:untagged:error {"body":{"message":"some error string"'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -78,7 +78,7 @@ test('error with no scope', (t) => {
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, 'default');
   unhookIntercept();
-  t.is(text.includes('default:tag1,tag2:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+  t.is(text.includes('default:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -97,7 +97,7 @@ test('error with null scope', (t) => {
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, 'default');
   unhookIntercept();
-  t.is(text.includes('default:tag1,tag2:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+  t.is(text.includes('default:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -116,7 +116,9 @@ test('error with no scope but using env var', (t) => {
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:tag1,tag2:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+
+  const testString = 'envar_scope:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":';
+  t.is(text.includes(testString), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -134,7 +136,8 @@ test('error with no scope and no tag but using env var - the untagged tag is emb
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:untagged:error {"data":"data","array":["1",{"d":"data"}],"timestamp":'), true);
+  const txt = 'envar_scope:untagged:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":';
+  t.is(text.includes(txt), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -152,7 +155,7 @@ test('error with no scope and no tag but using env var - string param', (t) => {
   logger.error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:untagged:error {"message":"some message"'), true);
+  t.is(text.includes('envar_scope:untagged:error {"body":{"message":"some message"'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -170,7 +173,7 @@ test('adding tags to new log', (t) => {
   });
   loggerTagged.tags(['c', 'd', 'e']).error('some message');
   anotherTagUnhook();
-  t.is(anotherTagText.includes('myscope:a,b,c,d,e:error {"message":"some message"'), true);
+  t.is(anotherTagText.includes('myscope:a,b,c,d,e:error {"body":{"message":"some message"'), true);
   t.is(anotherTagText.includes('"timestamp":'), true);
   t.is(anotherTagText.includes('"pid":'), true);
   t.is(anotherTagText.includes('"hostname":'), true);
@@ -187,7 +190,7 @@ test('changing tags', (t) => {
   logger.tags(['newtag', 'tag2']).error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message"'), true);
+  t.is(text.includes('envar_scope:newtag,tag2:error {"body":{"message":"some message"'), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
@@ -200,7 +203,7 @@ test('changing tags', (t) => {
   logger.error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   originalTagUnhookIntercept();
-  t.is(originalTagText.includes('envar_scope:untagged:error {"message":"some message"'), true);
+  t.is(originalTagText.includes('envar_scope:untagged:error {"body":{"message":"some message"'), true);
   t.is(originalTagText.includes('"timestamp":'), true);
   t.is(originalTagText.includes('"pid":'), true);
   t.is(originalTagText.includes('"hostname":'), true);
@@ -220,7 +223,7 @@ test('no timestamps', (t) => {
   logger.tags(['newtag', 'tag2']).error('some message');
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"some message"'), true);
+  t.is(text.includes('envar_scope:newtag,tag2:error {"body":{"message":"some message"'), true);
 
   t.is(text.includes('"timestamp":'), false);
   t.is(text.includes('"pid":'), false);
@@ -245,7 +248,7 @@ test('error upon throw', (t) => {
     logger.tags(['newtag', 'tag2']).error(error);
   }
   unhookIntercept();
-  t.is(text.includes('envar_scope:newtag,tag2:error {"message":"Error: some error message'), true);
+  t.is(text.includes('envar_scope:newtag,tag2:error {"body":{"message":"Error: some error message'), true);
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
   t.is(text.includes('"hostname":'), true);
