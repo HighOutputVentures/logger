@@ -78,12 +78,12 @@ One of the sinks for this is LogStash.
 node -> logstash -> loggly
 ```
 
-In order to integrate with Logstash the **base** input configuration is as follows:
+In order to integrate with Logstash the **base** input configuration is as follows for PM2:
 
 ```
 input {
    file{
-      path => "/root/.pm2/logs/sample-error-0.log"
+      path => "<path_to_pm2_logs>"
       start_position => beginning
    }
 }
@@ -103,7 +103,7 @@ filter {
 }
 output {
     loggly {
-        key => "80dca913-4ba6-40e4-ba21-78cd3ff68403"
+        key => "<key>"
         tag => "logstash"
         host => "logs-01.loggly.com"
         proto => "https"
