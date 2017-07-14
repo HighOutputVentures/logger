@@ -136,7 +136,8 @@ test('error with no scope and no tag but using env var - the untagged tag is emb
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:untagged:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":'), true);
+  const txt = 'envar_scope:untagged:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":';
+  t.is(text.includes(txt), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);
