@@ -58,9 +58,9 @@ export default class Logger implements ILogger {
    * @param level can be 'error', 'warn', 'info', 'verbose'
    */
   log(body: any, level: Level = 'verbose'): void {
-    let payload = {};
+    let payload = { body: {} };
     if (typeof body === 'object') {
-      payload = _.merge(payload, body);
+      payload.body = _.merge(payload.body, body);
       if (this.params.enableTimestamp) {
         payload = _.merge(payload, { timestamp: new Date() });
       }
@@ -71,7 +71,7 @@ export default class Logger implements ILogger {
         payload = _.merge(payload, { hostname: this.hostname });
       }
     } else if (typeof body === 'string') {
-      payload = _.merge(payload, { message: _.trim(body) });
+      payload.body = _.merge(payload.body, { message: _.trim(body) });
       if (this.params.enableTimestamp) {
         payload = _.merge(payload, { timestamp: new Date() });
       }
