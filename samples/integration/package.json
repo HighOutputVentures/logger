@@ -1,5 +1,5 @@
 {
-  "name": "logger",
+  "name": "logger-integration",
   "version": "0.0.1",
   "description": "A logging framework on top of debug",
   "main": "build/index.js",

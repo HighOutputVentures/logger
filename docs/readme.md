@@ -78,37 +78,32 @@ One of the sinks for this is LogStash.
 node -> logstash -> loggly
 ```
 
-In order to integrate with Logstash the **base** input configuration is as follows:
+In order to integrate with Logstash the **base** input configuration is as follows for PM2:
 
 ```
 input {
-    stdin {
-        id => "source_stdin"
-    }
+   file{
+      path => "<path_to_pm2_logs>"
+      start_position => beginning
+   }
 }
 filter {
     grok {
-        id => "mutate_filter"
         match => {
             "message" => "%{DAY:day}, %{MONTHDAY:monthday} %{MONTH:month} %{YEAR:year} %{TIME:time} %{WORD:timezone} %{WORD:scope}:%{DATA:scope_tags}:%{WORD:level} %{GREEDYDATA:json_data}"
         }
     }
     mutate {
-        id => "mutate_split"
-        add_tag => [ "%{scope}" ]
         split => { "scope_tags" => "," }
-        add_field => ["timestamp", "%{@timestamp}"]
-        remove_field => [ "day", "monthday", "month", "year", "time", "json_data", "timezone", "host" ]
     }
     json {
-        id => "mutate_json"
         source => "json_data"
+        target => "payload"
     }
 }
 output {
     loggly {
-        id => "sink_loggly"
-        key => "<customer_token>"
+        key => "<key>"
         tag => "logstash"
         host => "logs-01.loggly.com"
         proto => "https"
