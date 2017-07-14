@@ -82,33 +82,28 @@ In order to integrate with Logstash the **base** input configuration is as follo
 
 ```
 input {
-    stdin {
-        id => "source_stdin"
-    }
+   file{
+      path => "/root/.pm2/logs/sample-error-0.log"
+      start_position => beginning
+   }
 }
 filter {
     grok {
-        id => "mutate_filter"
         match => {
             "message" => "%{DAY:day}, %{MONTHDAY:monthday} %{MONTH:month} %{YEAR:year} %{TIME:time} %{WORD:timezone} %{WORD:scope}:%{DATA:scope_tags}:%{WORD:level} %{GREEDYDATA:json_data}"
         }
     }
     mutate {
-        id => "mutate_split"
-        add_tag => [ "%{scope}" ]
         split => { "scope_tags" => "," }
-        add_field => ["timestamp", "%{@timestamp}"]
-        remove_field => [ "day", "monthday", "month", "year", "time", "json_data", "timezone", "host" ]
     }
     json {
-        id => "mutate_json"
         source => "json_data"
+        target => "payload"
     }
 }
 output {
     loggly {
-        id => "sink_loggly"
-        key => "<customer_token>"
+        key => "80dca913-4ba6-40e4-ba21-78cd3ff68403"
         tag => "logstash"
         host => "logs-01.loggly.com"
         proto => "https"
