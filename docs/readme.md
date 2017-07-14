@@ -65,3 +65,60 @@ Adding tags on top of existing tags.
 logger.tags(['controller','some']).info({message: 'hello'});
 // Wed, 12 Jul 2017 07:51:09 GMT default:controller,some:verbose {"message":"hello"}
 ```
+
+### Sink Integration
+
+One of the sinks for this is LogStash.
+
+#### Log Stash base configuration
+
+```
+node -> logstash -> loggly
+```
+
+In order to integrate with Logstash the **base** input configuration is as follows:
+
+```
+input {
+    stdin {
+        id => "source_stdin"
+    }
+}
+filter {
+    grok {
+        id => "mutate_filter"
+        match => {
+            "message" => "%{DAY:day}, %{MONTHDAY:monthday} %{MONTH:month} %{YEAR:year} %{TIME:time} %{WORD:timezone} %{WORD:scope}:%{DATA:scope_tags}:%{WORD:level} %{GREEDYDATA:json_data}"
+        }
+    }
+    mutate {
+        id => "mutate_split"
+        add_tag => [ "%{scope}" ]
+        split => { "scope_tags" => "," }
+        add_field => ["timestamp", "%{@timestamp}"]
+        remove_field => [ "day", "monthday", "month", "year", "time", "json_data", "timezone", "host" ]
+    }
+    json {
+        id => "mutate_json"
+        source => "json_data"
+    }
+}
+output {
+    loggly {
+        id => "sink_loggly"
+        key => "<customer_token>"
+        tag => "logstash"
+        host => "logs-01.loggly.com"
+        proto => "https"
+    }
+}
+```
+
+You may need to modify a few things depending on your setup:
+
+* **input** - This will vary depending on you `devops` inftrastructure. You can also read from a file.
+* **output** - The current sink is loggly. You may add other sinks.
+* **output.loggly.key** - This is the [loggly customer token](https://www.loggly.com/docs/customer-token-authentication-token/).
+* **filter.grok.match.message** - If you're reading from a file, or using PM2, they may append/prepend additional data to the log lines.
+
+For testing purposes a very simple logstash Dockerfile can be downloaded from [here](https://hub.docker.com/r/bangonkali/docker-node/tags/).
