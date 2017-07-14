@@ -116,7 +116,9 @@ test('error with no scope but using env var', (t) => {
   logger.error({ data: 'data', array: ['1', { d: 'data' }] });
   t.is(logger.params.scope, process.env.LOG_SCOPE);
   unhookIntercept();
-  t.is(text.includes('envar_scope:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":'), true);
+
+  const testString = 'envar_scope:tag1,tag2:error {"body":{"data":"data","array":["1",{"d":"data"}]},"timestamp":';
+  t.is(text.includes(testString), true);
 
   t.is(text.includes('"timestamp":'), true);
   t.is(text.includes('"pid":'), true);

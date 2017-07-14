@@ -34,26 +34,28 @@ const logger = new Logger({
 ```
 ```js
 logger.error(err);
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:error {"message":"some error string","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:error {"body":{"message":"some error string"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 logger.warn({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:warn {"message":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:warn {"body":{"message":"hello"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 logger.warn('hello');
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:warn {"message":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:warn {"body":{"message":"hello"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 logger.info({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:info {"message":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:info {"body":{"message":"hello"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 logger.info('hello');
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:info {"message":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:info {"body":{"message":"hello"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 logger.verbose({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"message":"hello","timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"body":{"message":"hello"},"timestamp":"2017-07-12T08:54:49.393Z","pid":75589,"hostname":"web1.highoutput.io"}
 
 // export LOG_NOTIMESTAMP=1
+// export LOG_NOPID=1
+// export LOG_NOHOSTNAME=1
 logger.verbose({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"message":"hello"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:untagged:verbose {"body":{"message":"hello"}}
 ```
 
 Adding tags on top of existing tags.
@@ -63,7 +65,7 @@ Adding tags on top of existing tags.
 // export LOG_NOPID=1
 // export LOG_NOHOSTNAME=1
 logger.tags(['controller','some']).info({message: 'hello'});
-// Wed, 12 Jul 2017 07:51:09 GMT default:controller,some:verbose {"message":"hello"}
+// Wed, 12 Jul 2017 07:51:09 GMT default:controller,some:verbose {"body":{"message":"hello"}}
 ```
 
 ### Sink Integration
