@@ -1,6 +1,6 @@
 {
   "name": "logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A logging framework on top of debug",
   "main": "build/index.js",
   "scripts": {
